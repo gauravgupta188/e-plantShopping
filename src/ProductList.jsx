@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import './ProductList.css'
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import './ProductList.css';
 import CartItem from './CartItem';
-import { addItem , removeItem , updateQuantity } from './CartSlice';
+import { addItem } from './CartSlice';
 function ProductList({ onHomeClick }) {
     const [addedToCart, setAddedToCart] = useState({});
-
+    const dispatch = useDispatch();
+    const cart = useSelector(state => state.cart.items);
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
 
@@ -267,7 +269,7 @@ function ProductList({ onHomeClick }) {
     return (
         <div>
             <div className="navbar" style={styleObj}>
-                <div className="tag">
+                <div className="tag">  
                     <div className="luxury">
                         <img src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png" alt="" />
                         <a href="/" onClick={(e) => handleHomeClick(e)}>
@@ -306,8 +308,14 @@ function ProductList({ onHomeClick }) {
           <button
             className="product-button"
             onClick={() => handleAddToCart(plant)} // Handle adding plant to cart
+            disabled={addedToCart[plant.name] || cart.some(item => item.name === plant.name)}
+            style={{
+              backgroundColor: addedToCart[plant.name] || cart.some(item => item.name === plant.name) ? '#ccc' : undefined,
+              color: addedToCart[plant.name] || cart.some(item => item.name === plant.name) ? '#666' : undefined,
+              cursor: addedToCart[plant.name] || cart.some(item => item.name === plant.name) ? 'not-allowed' : 'pointer',
+            }}
           >
-            Add to Cart
+            {addedToCart[plant.name] || cart.some(item => item.name === plant.name) ? 'Added to Cart' : 'Add to Cart'}
           </button>
         </div>
       ))}
